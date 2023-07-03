@@ -4,23 +4,21 @@ Ax + By + Cz + D = 0, or you can directly define the plane with a point and a no
 */
 #pragma once
 
-#include "shape.h"
+#include "intersectable.h"
 #include "../../math/vector.h"
 #include "../../math/fast_math.h"
 #include "shape_utils.h"
 
 namespace graphics::raytracer {
 
-struct Plane : ShapeImpl {
-  math::Vector3 point;
-  math::Vector3 normal;
-  Material material;
+class Plane : public IntersectableImpl {
 
+public:
   Plane() = default;
 
-  Plane(math::Vector3 point_in, math::Vector3 normal_in, Material material_in) : point{point_in}, normal{normal_in}, ShapeImpl{material_in} {}
+  Plane(math::Vector3 point_in, math::Vector3 normal_in, Material material_in) : point{point_in}, normal{normal_in}, IntersectableImpl{material_in} {}
 
-  Plane(float a, float b, float c, float d, Material material_in) : ShapeImpl{material_in} {
+  Plane(float a, float b, float c, float d, Material material_in) : IntersectableImpl{material_in} {
     if (a != 0.0) {
       point = math::UnitX * (-d/a);
     } else if (b != 0.0) {
@@ -38,16 +36,23 @@ struct Plane : ShapeImpl {
     const float num = (point - origin) * normal;
     // Ray parallel to the plane, so no intersection.
     if (denominator > -1e-6 && denominator < 1e-6) {
-      return ObjectIntersectionInfo{.hit = false, .distance = 0, .normal = math::ZeroVector};
+      return kFailedHit;
     }
     const float t = ((point - origin) * normal) / denominator;
     // Distance negative, no intersection.
     if (t < 0) {
-      return ObjectIntersectionInfo{.hit = false, .distance = 0, .normal = math::ZeroVector};
+      return kFailedHit;
     }
-    return ObjectIntersectionInfo{.hit = true, .distance = t, .normal = normal.normalize()};
+    return ObjectIntersectionInfo{.hit = true,
+                                  .distance = t,
+                                  .normal = normal.normalize()};
   }
-};
 
+public:
+  // Planes can be uniquely defined by a point on the plane, and a normal to the plane.
+  math::Vector3 point;
+  math::Vector3 normal;
+
+};
 
 } // graphics::raytracer

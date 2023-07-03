@@ -23,6 +23,8 @@ void renderScene(Image& output_image, const CameraInfo& camera,
   // Basic loop for rendering - go through every pixel in the scene, cast
   // a ray from it, and see what color it is. Assign that color to the
   // pixel we just shot a ray from.
+  // TODO - this can be trivially parallelized, consider using some threadpool
+  // implementation to batch each row of parsing.
   for (int y = 0; y < H; y++) {
     for (int x = 0; x < W; x++) {
       const float sx = (2 * x - W) / (float) std::max(W, H);

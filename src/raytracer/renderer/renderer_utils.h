@@ -7,7 +7,7 @@ Defines useful renderer structs.
 
 #include "../../math/vector.h"
 #include "../../core/color.h"
-#include "../shapes/shape.h"
+#include "../shapes/intersectable.h"
 
 namespace graphics::raytracer {
 
@@ -33,7 +33,7 @@ struct SceneInfo {
   // Scene width;
   size_t width;
   // Represents shapes and structures in the scene.
-  std::vector<std::shared_ptr<ShapeImpl>> objects;
+  std::vector<std::shared_ptr<IntersectableImpl>> objects;
   // Represents the background color of the scene if nothing intersects
   // with any objects.
   Color background_color;

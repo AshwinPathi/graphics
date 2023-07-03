@@ -11,7 +11,7 @@ Parses scenes from file formats specified in: https://www.cs.virginia.edu/luther
 #include <sstream>
 
 #include "renderer/renderer_utils.h"
-#include "shapes/shape.h"
+#include "shapes/intersectable.h"
 #include "shapes/sphere.h"
 #include "shapes/plane.h"
 
@@ -39,6 +39,7 @@ std::vector<std::string> readFile(const std::string& path) {
       std::istringstream iss(line);
       std::string token;
       while (std::getline(iss, token, ' ')) {
+        if (token.empty() || token == " ") { continue; }
         file_tokens.push_back(token);
       }
     }
@@ -54,7 +55,7 @@ SceneInfo readScene(const std::string& path) {
   const std::vector<std::string>& file_tokens = readFile(path);
   const int N = file_tokens.size();
 
-  std::vector<std::shared_ptr<ShapeImpl>> objects;
+  std::vector<std::shared_ptr<IntersectableImpl>> objects;
   std::vector<PointLight> point_light_sources;
 
   Color current_color{1., 1., 1.};
