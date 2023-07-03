@@ -6,10 +6,10 @@ Ax + By + Cz + D = 0, or you can directly define the plane with a point and a no
 
 #include "shape.h"
 #include "../../math/vector.h"
-#include "../utils.h"
 #include "../../math/fast_math.h"
+#include "shape_utils.h"
 
-namespace graphics {
+namespace graphics::raytracer {
 
 struct Plane : ShapeImpl {
   math::Vector3 point;
@@ -18,9 +18,9 @@ struct Plane : ShapeImpl {
 
   Plane() = default;
 
-  Plane(math::Vector3 point_in, math::Vector3 normal_in, Material material_in) : point{point_in}, normal{normal_in}, material{material_in} {}
+  Plane(math::Vector3 point_in, math::Vector3 normal_in, Material material_in) : point{point_in}, normal{normal_in}, ShapeImpl{material_in} {}
 
-  Plane(float a, float b, float c, float d, Material material_in) : material{material_in} {
+  Plane(float a, float b, float c, float d, Material material_in) : ShapeImpl{material_in} {
     if (a != 0.0) {
       point = math::UnitX * (-d/a);
     } else if (b != 0.0) {
@@ -50,4 +50,4 @@ struct Plane : ShapeImpl {
 };
 
 
-} // graphics
+} // graphics::raytracer

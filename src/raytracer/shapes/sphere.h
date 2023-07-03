@@ -5,19 +5,18 @@ Represents a basic sphere.
 
 #include "shape.h"
 #include "../../math/vector.h"
-#include "../utils.h"
 #include "../../math/fast_math.h"
+#include "shape_utils.h"
 
-namespace graphics {
+namespace graphics::raytracer {
 
 struct Sphere : ShapeImpl {
   math::Vector3 center;
   float radius;
-  Material material;
 
   Sphere() = default;
 
-  Sphere(math::Vector3 center_in, float radius_in, Material material_in) : center{center_in}, radius{radius_in}, material{material_in} {} 
+  Sphere(math::Vector3 center_in, float radius_in, Material material_in) : center{center_in}, radius{radius_in}, ShapeImpl{material_in} {} 
 
   ObjectIntersectionInfo objectIntersect(const math::Vector3& origin, const math::Vector3& direction) const override {
     // Check to see if the intersection is inside the sphere or not.
@@ -48,4 +47,4 @@ struct Sphere : ShapeImpl {
 };
 
 
-} // graphics
+} // graphics::raytracer

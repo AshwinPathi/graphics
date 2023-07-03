@@ -1,15 +1,18 @@
-#include "driver.h"
+#include "renderer.h"
 
 namespace {
 
 constexpr int kDistanceCutoff = 1000;
 constexpr float kBias = 0.0001;
+constexpr auto float_infinity = std::numeric_limits<float>::infinity();
+
+// Forward declarations of anonymous classes
 class RayCastInfo;
 class SceneIntersectionInfo;
 
 }
 
-namespace graphics {
+namespace graphics::raytracer {
 
 void renderScene(Image& output_image, const CameraInfo& camera,
                  const SceneInfo& scene, int max_depth) {
@@ -76,7 +79,7 @@ RayCastInfo castRay(const math::Vector3& origin, const math::Vector3& direction,
 
 
 SceneIntersectionInfo objectIntersections(const math::Vector3& origin, const math::Vector3& direction, const SceneInfo& scene) {
-  float nearest_object_distance = std::numeric_limits<float>::infinity();
+  float nearest_object_distance = float_infinity;
   math::Vector3 position, normal;
   Material material;
 
@@ -84,13 +87,13 @@ SceneIntersectionInfo objectIntersections(const math::Vector3& origin, const mat
   // direction |direction| hits any objects. Return the information of the first object
   // that was hit.
   for (const auto& object : scene.objects) {
-    const auto& object_intersection = object.objectIntersect(origin, direction);
+    const auto& object_intersection = object->objectIntersect(origin, direction);
     if (!object_intersection.hit || object_intersection.distance > nearest_object_distance) {
       continue;
     }
     nearest_object_distance = object_intersection.distance;
     position = origin + direction * object_intersection.distance; 
-    material = object.material;
+    material = object->material;
     normal = object_intersection.normal;
   }
 
@@ -100,5 +103,4 @@ SceneIntersectionInfo objectIntersections(const math::Vector3& origin, const mat
                                .material = material};
 }
 
-
-} // graphics
+} // graphics::raytracer

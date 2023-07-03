@@ -7,12 +7,14 @@ create a signle frame of a ray traced scene.
 #pragma once
 
 #include <vector>
+#include <memory>
 
-#include "../math/vector.h"
-#include "../core/color.h"
-#include "../core/image.h"
-#include "shapes/sphere.h"
+#include "../../math/vector.h"
+#include "../../core/color.h"
+#include "../../core/image.h"
+#include "../shapes/shape_utils.h"
 
+#include "renderer_utils.h"
 
 namespace {
 // These structs are in an anonymous namespace since they are only used
@@ -34,39 +36,12 @@ struct SceneIntersectionInfo {
   // The normal vector of the intersected object.
   graphics::math::Vector3 normal;
   // The material of the object that was hit
-  graphics::Material material;
+  graphics::raytracer::Material material;
 };
 
 } // namespace
 
-namespace graphics {
-
-// Holds information about the camera that looks into the scene.
-struct CameraInfo {
-  math::Vector3 eye;
-  math::Vector3 forward;
-  math::Vector3 right;
-  math::Vector3 up;
-};
-
-// Represents a point light source that has a color.
-// It is infinitely far in the direction of the |direction| vector.
-struct PointLight {
-  Color color;
-  math::Vector3 direction;
-};
-
-// Holds information for the overall scene.
-struct SceneInfo {
-  // Represents shapes and structures in the scene.
-  std::vector<Sphere> objects;
-  // Represents the background color of the scene if nothing intersects
-  // with any objects.
-  Color background_color;
-  // Represents a set of point light sources in the scene.
-  std::vector<PointLight> point_lights;
-};
-
+namespace graphics::raytracer {
 
 // Renders a single frame a of a scene given some input parameters. Basically just calls
 // castRay() in a loop over all the pixels in the scene, then outputs the image to the
