@@ -1,8 +1,6 @@
-/*
-Utility structs for shapes.
-*/
+// Material definition.
 #pragma once
-#include "../../core/color.h"
+#include "src/core/color.h"
 
 namespace graphics::raytracer {
 

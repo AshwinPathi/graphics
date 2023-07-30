@@ -5,9 +5,9 @@ Defines useful renderer structs.
 #include <memory>
 #include <vector>
 
-#include "../../math/vector.h"
-#include "../../core/color.h"
-#include "../shapes/intersectable.h"
+#include "src/math/vector3.h"
+#include "src/core/color.h"
+#include "src/raytracer/shapes/intersectable.h"
 
 namespace graphics::raytracer {
 

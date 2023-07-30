@@ -1,8 +1,7 @@
-/*
-Some functions for fast (constexpr) math functions.
-*/
+// Some functions for fast (constexpr) math functions.
 #pragma once
 #include <cmath>
+#include <type_traits>
 
 namespace graphics::math {
 
@@ -29,6 +28,24 @@ constexpr T sqrt(T x) {
   } else {
     return std::sqrt(x);
   }
+}
+
+
+template <typename T, typename P>
+constexpr T powHelper(T base, P pow) {
+  static_assert(std::is_arithmetic_v<T>);
+  if (pow == 0) {
+    return 1;
+  }
+  return base * powHelper(base, pow - 1);
+}
+
+template <typename T, typename P>
+constexpr T pow(T base, P pow) {
+  if (std::is_constant_evaluated() && std::is_integral_v<P>) {
+    return powHelper(base, pow);
+  }
+  return std::pow(base, pow);
 }
 
 } // graphics::math

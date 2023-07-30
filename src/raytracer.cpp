@@ -2,13 +2,13 @@
 #include <vector>
 #include <memory>
 
-#include "../core/image.h"
-#include "renderer/renderer.h"
-#include "scene_parser.h"
+#include "src/core/ppm_image.h"
+#include "src/raytracer/renderer/renderer.h"
+#include "src/raytracer/utils/scene_parser.h"
 
 
 void runRaytracer(const graphics::raytracer::SceneInfo& scene) {
-  graphics::Image im(scene.height, scene.width);
+  graphics::PPMImage im(scene.height, scene.width);
 
   constexpr graphics::raytracer::CameraInfo camera {
     .eye = graphics::math::ZeroVector,
@@ -17,16 +17,16 @@ void runRaytracer(const graphics::raytracer::SceneInfo& scene) {
     .up = graphics::math::UnitY,
   };
 
-  graphics::raytracer::renderScene(im, camera, scene, 4);
+  graphics::raytracer::RenderScene(im, camera, scene, 4);
 
-  im.write("./test.ppm");
+  im.Write("./test.ppm");
 }
 
 int main() {
   std::string location;
   std::cout << "input location: \n"; 
   std::cin >> location;
-  const auto& scene = graphics::raytracer::readScene(location);
+  const auto& scene = graphics::raytracer::ReadScene(location);
   runRaytracer(scene);
   return 0;
 }

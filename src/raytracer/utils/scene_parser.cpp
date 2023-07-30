@@ -1,7 +1,7 @@
 /*
 Parses scenes from file formats specified in: https://www.cs.virginia.edu/luther/4810/F2021/hw3.html
 */
-#pragma once
+#include "src/raytracer/utils/scene_parser.h"
 
 #include <iostream>
 #include <vector>
@@ -10,10 +10,10 @@ Parses scenes from file formats specified in: https://www.cs.virginia.edu/luther
 #include <fstream>
 #include <sstream>
 
-#include "renderer/renderer_utils.h"
-#include "shapes/intersectable.h"
-#include "shapes/sphere.h"
-#include "shapes/plane.h"
+#include "src/raytracer/renderer/renderer_utils.h"
+#include "src/raytracer/shapes/intersectable.h"
+#include "src/raytracer/shapes/sphere.h"
+#include "src/raytracer/shapes/plane.h"
 
 namespace {
 
@@ -26,7 +26,7 @@ constexpr std::string_view kSunCommand = "sun";
 
 namespace graphics::raytracer {
 
-std::vector<std::string> readFile(const std::string& path) {
+std::vector<std::string> ReadFile(const std::string& path) {
   std::vector<std::string> file_tokens;
 
   std::string line;
@@ -50,9 +50,9 @@ std::vector<std::string> readFile(const std::string& path) {
   return file_tokens;
 }
 
-SceneInfo readScene(const std::string& path) {
+SceneInfo ReadScene(const std::string& path) {
 
-  const std::vector<std::string>& file_tokens = readFile(path);
+  const std::vector<std::string>& file_tokens = ReadFile(path);
   const int N = file_tokens.size();
 
   std::vector<std::shared_ptr<IntersectableImpl>> objects;

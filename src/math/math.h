@@ -1,8 +1,8 @@
-/*
-Helper math functions.
-*/
+// Helper math functions.
 #pragma once
-#include "vector.h"
+#include <type_traits>
+
+#include "vector3.h"
 
 namespace graphics::math {
 

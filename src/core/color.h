@@ -1,60 +1,121 @@
-/*
-Very simple color class. Just represents 3 numeric values for r, g, b.
-*/
+// Defines a basic 3 channel color struct (r, g, b)
 #pragma once
+#include <tuple>
+#include <iostream>
 
 namespace graphics {
 
-template <
-  typename T,
-  typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type
->
-struct ColorImpl {
-  T r;
-  T g;
-  T b;
+// A color is just a specially named 3-tuple.
+struct Color {
+  float r;
+  float g;
+  float b;
+  // No alpha for now
 
-  template <
-    typename U,
-    typename = typename std::enable_if_t<std::is_floating_point_v<U>, U>
-  >
-  constexpr ColorImpl<T> operator*(const U scalar) const {
-    return ColorImpl<T>{static_cast<T>(r * scalar),
-                static_cast<T>(g * scalar),
-                static_cast<T>(b * scalar)};
+  ///// Helper methods
+
+  // Converts this color into a tuple.
+  std::tuple<float, float, float> Tuple() {
+    return {r, g, b};
   }
 
-  template <
-    typename U,
-    typename = typename std::enable_if_t<std::is_floating_point_v<U>, U>
-  >
-  constexpr ColorImpl<T> operator*(const ColorImpl<U>& other) const {
-    return ColorImpl{static_cast<T>(r * other.r), static_cast<T>(g * other.g), static_cast<T>(b * other.b)};
+  ///// Operator overloads
+
+  // Scalar multiplication
+  constexpr Color operator*(float scalar) const {
+    return {r * scalar, g * scalar, b * scalar};
   }
 
-  template <
-    typename U,
-    typename = typename std::enable_if_t<std::is_floating_point_v<U>, U>
-  >
-  constexpr ColorImpl<T> operator+(const ColorImpl<U>& other) const {
-    return ColorImpl{static_cast<T>(r + other.r), static_cast<T>(g + other.g), static_cast<T>(b + other.b)};
+  // Scalar division
+  constexpr Color operator/(float scalar) const {
+    return *this * 1/scalar;
   }
 
-  template <
-    typename U,
-    typename = typename std::enable_if_t<std::is_floating_point_v<U>, U>
-  >
-  ColorImpl<T>& operator+=(const ColorImpl<U>& other) {
-    r += static_cast<T>(other.r);
-    g += static_cast<T>(other.g);
-    b += static_cast<T>(other.b);
+  // Element wise multiplication with another color.
+  constexpr Color operator*(const Color& other) const {
+    return {r * other.r, g * other.g, b * other.b};
+  }
+
+  // Element wise division with another color.
+  constexpr Color operator/(const Color& other) const {
+    return {r / other.r, g / other.g, b / other.b};
+  }
+
+  // Element wise addition with another color.
+  constexpr Color operator+(const Color& other) const {
+    return {r + other.r, g + other.g, b + other.b};
+  }
+
+  // Element wise subtraction with another color.
+  constexpr Color operator-(const Color& other) const {
+    return {r - other.r, g - other.g, b - other.b};
+  }
+
+  // Self add another color
+  Color& operator+=(const Color& other) {
+    r += other.r;
+    g += other.g;
+    b += other.b;
     return *this;
   }
 
+  // Self subtract another color
+  Color& operator-=(const Color& other) {
+    r -= other.r;
+    g -= other.g;
+    b -= other.b;
+    return *this;
+  }
+
+  // Self scalar multiply
+  Color& operator*=(float scalar) {
+    r *= scalar;
+    g *= scalar;
+    b *= scalar;
+    return *this;
+  }
+
+  // Self scalar divide
+  Color& operator/=(float scalar) {
+    *this *= 1/scalar;
+    return *this;
+  }
+
+  // Self multiply
+  Color& operator*=(const Color& other) {
+    r *= other.r;
+    g *= other.g;
+    b *= other.b;
+    return *this;
+  }
+
+  // Self divide
+  Color& operator/=(const Color& other) {
+    r /= other.r;
+    g /= other.g;
+    b /= other.b;
+    return *this;
+  }
+
+
+  // Index into the color like you would with an array.
+  float& operator[](const int i) {
+    return i == 0 ? r : (i == 1 ? g : b); 
+  }
+  const float& operator[](const int i) const {
+    return i == 0 ? r : (i == 1 ? g : b);
+  }
 };
 
-// Color in the range [0.0 - 1.0]. This is used for most ray calculations.
-using Color = ColorImpl<float>;
+/*
+std::ostream& operator<<(std::ostream &os, const Color& c) {
+  return (os << '(' << c.r << ", " << c.g << ", " << c.b << ')');
+}
+*/
 
+// Aliases for various colors.
+static constexpr Color RED = Color{1.0, 0., 0.};
+static constexpr Color GREEN = Color{0.0, 1.0, 0.};
+static constexpr Color BLUE = Color{0.0, 0., 1.0};
 
 } // graphics
