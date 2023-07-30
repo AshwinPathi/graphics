@@ -21,6 +21,7 @@ namespace {
 constexpr std::string_view kPngCommand = "png";
 constexpr std::string_view kColorCommand = "color";
 constexpr std::string_view kSphereCommand = "sphere";
+constexpr std::string_view kPlaneCommand = "plane";
 constexpr std::string_view kSunCommand = "sun";
 
 }
@@ -40,7 +41,7 @@ std::vector<std::string> ReadFile(const std::string& path) {
       std::istringstream iss(line);
       std::string token;
       while (std::getline(iss, token, ' ')) {
-        if (token.empty() || token == " ") { continue; }
+        if (token.empty() || token == " " || token[0] == '#') { continue; }
         file_tokens.push_back(token);
       }
     }
@@ -72,8 +73,7 @@ SceneInfo ReadScene(const std::string& path) {
       width = std::stoi(file_tokens[iter++]);
       height = std::stoi(file_tokens[iter++]);
       iter++;
-    }
-    else if (token == kSphereCommand) {
+    } else if (token == kSphereCommand) {
       Sphere sphere{
         math::Vector3{
           std::stof(file_tokens[iter++]),
@@ -86,8 +86,18 @@ SceneInfo ReadScene(const std::string& path) {
         }
       };
       world.AddObject(std::make_shared<Sphere>(sphere));
-    }
-    else if (token == kSunCommand) {
+    } else if (token == kPlaneCommand) {
+      Plane plane{
+        std::stof(file_tokens[iter++]),
+        std::stof(file_tokens[iter++]),
+        std::stof(file_tokens[iter++]),
+        std::stof(file_tokens[iter++]),
+        Material {
+          current_color
+        }
+      };
+      world.AddObject(std::make_shared<Plane>(plane));
+    } else if (token == kSunCommand) {
       PointLight source {
           .color = current_color,
           .direction = {
