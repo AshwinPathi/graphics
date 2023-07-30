@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <thread>
 
 #include "src/math/vector3.h"
 #include "src/core/color.h"
@@ -12,13 +13,52 @@
 
 namespace {
 
-constexpr int kDistanceCutoff = 1000;
 constexpr float kBias = 0.0001;
-constexpr auto float_infinity = std::numeric_limits<float>::infinity();
 
 }
 
 namespace graphics::raytracer {
+
+void FastRenderScene(PPMImage& output_image, const CameraInfo& camera,
+                 const SceneInfo& scene, int max_depth, int num_threads) {
+  const int H = static_cast<int>(output_image.height());
+  const int chunk_size = H / num_threads;
+
+  std::vector<std::thread> threads(num_threads);
+  // Begin executing our fast render subprocess on each thread
+  for (int i = 0; i < num_threads; i++) {
+    int start_index = i * chunk_size;
+    int end_index = (i == num_threads - 1 ? H : (i + 1) * chunk_size);
+    // Note that output image is passed in by reference since we need each thread
+    // to modify the image buffer directly.
+    threads[i] = std::thread(FastRenderSceneHelper, std::ref(output_image), start_index, end_index, camera, scene, max_depth);
+  }
+  // Stop the threads by joining them all
+  for (int i = 0; i < num_threads; i++) {
+    threads[i].join();
+  }
+}
+
+void FastRenderSceneHelper(PPMImage& output_image, int min_height, int max_height, const CameraInfo& camera,
+                 const SceneInfo& scene, int max_depth) {
+  // Have to cast to an integer since this will mess up negative division.
+  const int H = static_cast<int>(output_image.height());
+  const int W = static_cast<int>(output_image.width());
+
+  for (int y = min_height; y < max_height; y++) {
+    for (int x = 0; x < W; x++) {
+      const float sx = (2 * x - W) / (float) std::max(W, H);
+      const float sy = (H - 2 * y) / (float) std::max(W, H);
+
+      const math::Vector3 origin = camera.eye;
+      const math::Vector3 direction = (camera.forward + camera.right * sx + camera.up * sy).normalize();
+
+      const auto& ray_cast_info = CastRay(origin, direction, scene, 0, max_depth);
+      output_image[y][x] = ray_cast_info.color;
+    }
+  }
+}
+
 
 void RenderScene(PPMImage& output_image, const CameraInfo& camera,
                  const SceneInfo& scene, int max_depth) {
@@ -40,7 +80,6 @@ void RenderScene(PPMImage& output_image, const CameraInfo& camera,
       const math::Vector3 direction = (camera.forward + camera.right * sx + camera.up * sy).normalize();
 
       const auto& ray_cast_info = CastRay(origin, direction, scene, 0, max_depth);
-
       output_image[y][x] = ray_cast_info.color;
     }
   }
@@ -50,7 +89,7 @@ RayCastInfo CastRay(const math::Vector3& origin, const math::Vector3& direction,
           const SceneInfo& scene, int cur_depth, int max_depth) {
   // First check to see if we hit any object in the scene, given a ray starting at |origin|
   // and looking in direction |direction|.
-  const auto& intersected_object = Intersections(origin, direction, scene);
+  const auto& intersected_object = scene.world.Intersect(origin, direction);
  
   // If we don't hit anything, then return a failed hit and the background color.
   if (cur_depth >= max_depth || !intersected_object.hit) {
@@ -67,7 +106,7 @@ RayCastInfo CastRay(const math::Vector3& origin, const math::Vector3& direction,
     // Checks to see if there is any intersection between the object we just hit, and the light source.
     // Note that the shadow ray origin has to be slightly offset to prevent "shadow acne"
     const auto& shadow_ray_origin = intersected_object.point + (intersected_object.normal * kBias);
-    const auto& light_obj_intersection = Intersections(shadow_ray_origin, direction_to_light.normalize(), scene);
+    const auto& light_obj_intersection = scene.world.Intersect(shadow_ray_origin, direction_to_light.normalize());
 
     // If we hit an object on the way to the light, then this spot is not illuminated, and we can continue the
     // rest of the loop.
@@ -83,25 +122,6 @@ RayCastInfo CastRay(const math::Vector3& origin, const math::Vector3& direction,
   }
 
   return RayCastInfo{.hit = true, .color = ray_color};
-}
-
-
-ObjectIntersectionInfo Intersections(const math::Vector3& origin, const math::Vector3& direction, const SceneInfo& scene) {
-  ObjectIntersectionInfo nearest_object{.distance = float_infinity};
-
-  // Go through each of the objects in the scene and see if the ray starting at |origin| and in
-  // direction |direction| hits any objects. Return the information of the first object
-  // that was hit.
-  for (const auto& object : scene.objects) {
-    auto object_intersection = object->Intersect(origin, direction);
-    if (!object_intersection.hit || object_intersection.distance > nearest_object.distance) {
-      continue;
-    }
-    nearest_object = std::move(object_intersection);
-  }
-
-  nearest_object.hit = nearest_object.distance < kDistanceCutoff;
-  return nearest_object;
 }
 
 } // graphics::raytracer

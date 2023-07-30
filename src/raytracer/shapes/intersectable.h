@@ -33,7 +33,7 @@ static constexpr ObjectIntersectionInfo kFailedHit{
 };
 
 
-class IntersectableImpl {
+class Intersectable {
 
 public:
   // Shapes must override the objectIntersect method, which calculates if the object was hit

@@ -7,7 +7,7 @@
 #include "src/raytracer/utils/scene_parser.h"
 
 
-void runRaytracer(const graphics::raytracer::SceneInfo& scene) {
+void runRaytracer(const graphics::raytracer::SceneInfo& scene, int num_threads) {
   graphics::PPMImage im(scene.height, scene.width);
 
   constexpr graphics::raytracer::CameraInfo camera {
@@ -17,16 +17,19 @@ void runRaytracer(const graphics::raytracer::SceneInfo& scene) {
     .up = graphics::math::UnitY,
   };
 
-  graphics::raytracer::RenderScene(im, camera, scene, 4);
+  graphics::raytracer::FastRenderScene(im, camera, scene, 4, num_threads);
 
   im.Write("./test.ppm");
 }
 
 int main() {
   std::string location;
+  int num_threads;
   std::cout << "input location: \n"; 
   std::cin >> location;
+  std::cout << "Number of threads: \n";
+  std::cin >> num_threads;
   const auto& scene = graphics::raytracer::ReadScene(location);
-  runRaytracer(scene);
+  runRaytracer(scene, num_threads);
   return 0;
 }

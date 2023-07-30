@@ -117,5 +117,7 @@ std::ostream& operator<<(std::ostream &os, const Color& c) {
 static constexpr Color RED = Color{1.0, 0., 0.};
 static constexpr Color GREEN = Color{0.0, 1.0, 0.};
 static constexpr Color BLUE = Color{0.0, 0., 1.0};
+static constexpr Color BLACK = Color{0.0, 0.0, 0.0};
+static constexpr Color WHITE = Color{1.0, 1.0, 1.0};
 
 } // graphics

@@ -11,6 +11,7 @@ Parses scenes from file formats specified in: https://www.cs.virginia.edu/luther
 #include <sstream>
 
 #include "src/raytracer/renderer/renderer_utils.h"
+#include "src/raytracer/renderer/world.h"
 #include "src/raytracer/shapes/intersectable.h"
 #include "src/raytracer/shapes/sphere.h"
 #include "src/raytracer/shapes/plane.h"
@@ -55,7 +56,7 @@ SceneInfo ReadScene(const std::string& path) {
   const std::vector<std::string>& file_tokens = ReadFile(path);
   const int N = file_tokens.size();
 
-  std::vector<std::shared_ptr<IntersectableImpl>> objects;
+  World world;
   std::vector<PointLight> point_light_sources;
 
   Color current_color{1., 1., 1.};
@@ -84,7 +85,7 @@ SceneInfo ReadScene(const std::string& path) {
           current_color
         }
       };
-      objects.push_back(std::make_shared<Sphere>(sphere));
+      world.AddObject(std::make_shared<Sphere>(sphere));
     }
     else if (token == kSunCommand) {
       PointLight source {
@@ -109,8 +110,8 @@ SceneInfo ReadScene(const std::string& path) {
   SceneInfo scene {
     .height = height,
     .width = width,
-    .objects = std::move(objects),
-    .background_color = graphics::Color{0.5, 0.5, 1.0},
+    .world = std::move(world),
+    .background_color = graphics::BLACK,
     .point_lights = std::move(point_light_sources)
   };
 

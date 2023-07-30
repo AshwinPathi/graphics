@@ -8,7 +8,7 @@
 
 namespace graphics::raytracer {
 
-class Sphere : public IntersectableImpl {
+class Sphere : public Intersectable {
 
 public:
   Sphere(math::Vector3 center, float radius, Material material);

@@ -25,6 +25,13 @@ struct RayCastInfo {
   graphics::Color color;
 };
 
+// Render Scene but faster by using threading.
+void FastRenderScene(PPMImage& output_image, const CameraInfo& camera,
+                 const SceneInfo& scene, int max_depth, int num_threads);
+
+void FastRenderSceneHelper(PPMImage& output_image, int min_height, int max_height, const CameraInfo& camera,
+                 const SceneInfo& scene, int max_depth);
+
 // Renders a single frame a of a scene given some input parameters. Basically just calls
 // castRay() in a loop over all the pixels in the scene, then outputs the image to the
 // |output_image| buffer.
@@ -36,9 +43,5 @@ void RenderScene(PPMImage& output_image, const CameraInfo& camera,
 // |max_bounces| times.
 RayCastInfo CastRay(const math::Vector3& origin, const math::Vector3& direction,
           const SceneInfo& scene, int cur_depth, int max_depth);
-
-
-// Finds out what object a given ray intersected with in the scene.
-ObjectIntersectionInfo Intersections(const math::Vector3& origin, const math::Vector3& direction, const SceneInfo& scene);
 
 } // namespace graphics

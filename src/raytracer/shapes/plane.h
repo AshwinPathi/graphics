@@ -10,7 +10,7 @@ Ax + By + Cz + D = 0, or you can directly define the plane with a point and a no
 
 namespace graphics::raytracer {
 
-class Plane : public IntersectableImpl {
+class Plane : public Intersectable {
 
 public:
   // Define a plane with a point and a normal

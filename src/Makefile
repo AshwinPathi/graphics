@@ -4,6 +4,8 @@ CXXFLAGS=-std=$(CXXVERSION) -O2 -I$(CURDIR)/..
 
 # Find makefile dependencies with:
 # clang++ -MM -I$(CURDIR)/.. <file> 
+# Consider doing: https://stackoverflow.com/questions/313778/generate-dependencies-for-a-makefile-for-a-project-in-c-c
+
 
 ########################################################################
 #       															   #
@@ -26,7 +28,7 @@ image_test.o : core/ppm_image.h core/color.h
 #						     Raytracer								   #
 #																	   #
 ########################################################################
-raytracer_objects = raytracer.o renderer.o sphere.o plane.o ppm_image.o scene_parser.o
+raytracer_objects = raytracer.o renderer.o sphere.o plane.o ppm_image.o scene_parser.o world.o
 
 ## Binary
 raytracer : $(raytracer_objects)
@@ -37,12 +39,15 @@ raytracer.o : core/ppm_image.h raytracer/renderer/renderer.h raytracer/utils/sce
 	$(CXX) $(CXXFLAGS) -c raytracer.cpp
 
 ## Utils
-scene_parser.o : raytracer/renderer/renderer_utils.h raytracer/shapes/intersectable.h raytracer/shapes/sphere.h raytracer/shapes/plane.h
+scene_parser.o : raytracer/renderer/renderer_utils.h raytracer/shapes/intersectable.h raytracer/shapes/sphere.h raytracer/shapes/plane.h raytracer/renderer/world.h
 	$(CXX) $(CXXFLAGS) -c raytracer/utils/scene_parser.cpp
 
 ## Renderer
-renderer.o : math/vector3.h core/color.h core/ppm_image.h raytracer/common/material.h raytracer/renderer/renderer_utils.h
+renderer.o : math/vector3.h core/color.h core/ppm_image.h raytracer/common/material.h raytracer/renderer/renderer_utils.h raytracer/renderer/world.h
 	$(CXX) $(CXXFLAGS) -c raytracer/renderer/renderer.cpp
+
+world.o : raytracer/shapes/intersectable.h math/vector3.h
+	$(CXX) $(CXXFLAGS) -c raytracer/renderer/world.cpp
 
 ## Shapes
 sphere.o : raytracer/shapes/intersectable.h math/vector3.h math/fast_math.h raytracer/common/material.h
