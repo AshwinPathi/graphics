@@ -1,0 +1,6 @@
+- https://www.reedbeta.com/blog/on-vector-math-libraries/#how-to-simd-and-how-not-to
+- https://github.com/alecjacobson/common-3d-test-models
+- https://www.cs.cmu.edu/~mbz/personal/graphics/obj.html
+- https://www.reddit.com/r/GraphicsProgramming/comments/nq2iec/how_do_i_render_an_obj_mesh_in_my_raytracer/
+- https://github.com/mattgodbolt/pt-three-ways
+- https://github.com/HNegus/RTIOW/tree/master/src
