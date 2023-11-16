@@ -279,7 +279,7 @@ template <typename T, size_t Dims>
 constexpr Vector<T, Dims> operator+(const Vector<T, Dims>& vec, const Vector<T, Dims>& other) {
   Vector<T, Dims> new_v;
   for (int i = 0; i < Dims; i++) {
-    new_v[i] = vec.data[i] + other.data[i];
+    new_v.data[i] = vec.data[i] + other.data[i];
   }
   return new_v;
 }
@@ -295,7 +295,7 @@ template <typename T, size_t Dims>
 constexpr Vector<T, Dims> operator-(const Vector<T, Dims>& vec) {
   Vector<T, Dims> new_v;
   for (int i = 0; i < Dims; i++) {
-    new_v[i] = -vec.data[i];
+    new_v.data[i] = -vec.data[i];
   }
   return new_v;
 }

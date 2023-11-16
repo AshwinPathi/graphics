@@ -16,6 +16,7 @@ constexpr T sqrtHelper(T x, T curr, T prev) {
     : sqrtHelper(x, static_cast<T>(0.5) * (curr + x / curr), curr);
 }
 
+// (potentially) Compile time square root using newtons method.
 template <
   typename T,
   typename = typename std::enable_if_t<std::is_floating_point_v<T>, T>
@@ -40,6 +41,8 @@ constexpr T powHelper(T base, P pow) {
   return base * powHelper(base, pow - 1);
 }
 
+// (potentially) Compile time power function. Can only do compile time power computation
+// if the power is an integral type, otherwise falls back to non-constexpr power.
 template <typename T, typename P>
 constexpr T pow(T base, P pow) {
   if (std::is_constant_evaluated() && std::is_integral_v<P>) {
