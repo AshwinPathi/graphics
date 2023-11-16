@@ -2,3 +2,4 @@
 *.ppm
 *.out
 *.o
+build/

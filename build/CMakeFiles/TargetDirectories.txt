@@ -1,4 +1,0 @@
-/Users/ashwin/Downloads/coding/projects/graphics/build/CMakeFiles/raytrace.dir
-/Users/ashwin/Downloads/coding/projects/graphics/build/CMakeFiles/rayTracer.dir
-/Users/ashwin/Downloads/coding/projects/graphics/build/CMakeFiles/edit_cache.dir
-/Users/ashwin/Downloads/coding/projects/graphics/build/CMakeFiles/rebuild_cache.dir
