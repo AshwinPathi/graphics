@@ -23,7 +23,7 @@ struct Vector {
   T data[Dims];
 
   // Self multiply by scalar
-  Vector<T, Dims>& operator*=(const T scalar) {
+  constexpr Vector<T, Dims>& operator*=(const T scalar) noexcept {
     for (int i = 0; i < Dims; i++) {
       data[i] *= scalar;
     }
@@ -31,13 +31,13 @@ struct Vector {
   }
 
   // Self divide by scalar
-  Vector<T, Dims>& operator/=(const T scalar) {
+  constexpr Vector<T, Dims>& operator/=(const T scalar) {
     *this *= 1./scalar;
     return *this;
   }
 
   // Self add another vector
-  Vector<T, Dims>& operator+=(const Vector<T, Dims>& other) {
+  constexpr Vector<T, Dims>& operator+=(const Vector<T, Dims>& other) noexcept {
     for (int i = 0; i < Dims; i++) {
       data[i] += other.data[i];
     }
@@ -45,7 +45,7 @@ struct Vector {
   }
 
   // Self subtract another vector
-  Vector<T, Dims>& operator-=(const Vector<T, Dims>& other) {
+  constexpr Vector<T, Dims>& operator-=(const Vector<T, Dims>& other) noexcept {
     *this += -other;
     return *this;
   }
@@ -73,7 +73,7 @@ struct Vector<T, 2> {
   };
 
   // Self multiply by scalar
-  Vector<T, Dims>& operator*=(const T scalar) {
+  constexpr Vector<T, Dims>& operator*=(const T scalar) noexcept {
     for (int i = 0; i < Dims; i++) {
       data[i] *= scalar;
     }
@@ -81,14 +81,14 @@ struct Vector<T, 2> {
   }
 
   // Self divide by scalar
-  Vector<T, Dims>& operator/=(const T scalar) {
+  constexpr Vector<T, Dims>& operator/=(const T scalar) {
     *this *= 1./scalar;
     return *this;
   }
 
 
   // Self add another vector
-  Vector<T, Dims>& operator+=(const Vector<T, Dims>& other) {
+  constexpr Vector<T, Dims>& operator+=(const Vector<T, Dims>& other) noexcept {
     for (int i = 0; i < Dims; i++) {
       data[i] += other.data[i];
     }
@@ -96,7 +96,7 @@ struct Vector<T, 2> {
   }
 
   // Self subtract another vector
-  Vector<T, Dims>& operator-=(const Vector<T, Dims>& other) {
+  constexpr Vector<T, Dims>& operator-=(const Vector<T, Dims>& other) noexcept {
     *this += -other;
     return *this;
   }
@@ -123,7 +123,7 @@ struct Vector<T, 3> {
   };
 
   // Self multiply by scalar
-  Vector<T, Dims>& operator*=(const T scalar) {
+  constexpr Vector<T, Dims>& operator*=(const T scalar) noexcept {
     for (int i = 0; i < Dims; i++) {
       data[i] *= scalar;
     }
@@ -131,13 +131,13 @@ struct Vector<T, 3> {
   }
 
   // Self divide by scalar
-  Vector<T, Dims>& operator/=(const T scalar) {
+  constexpr Vector<T, Dims>& operator/=(const T scalar) {
     *this *= 1./scalar;
     return *this;
   }
 
   // Self add another vector
-  Vector<T, Dims>& operator+=(const Vector<T, Dims>& other) {
+  constexpr Vector<T, Dims>& operator+=(const Vector<T, Dims>& other) noexcept {
     for (int i = 0; i < Dims; i++) {
       data[i] += other.data[i];
     }
@@ -145,7 +145,7 @@ struct Vector<T, 3> {
   }
 
   // Self subtract another vector
-  Vector<T, Dims>& operator-=(const Vector<T, Dims>& other) {
+  constexpr Vector<T, Dims>& operator-=(const Vector<T, Dims>& other) noexcept {
     *this += -other;
     return *this;
   }
@@ -172,7 +172,7 @@ struct Vector<T, 4> {
   };
 
   // Self multiply by scalar
-  Vector<T, Dims>& operator*=(const T scalar) {
+  constexpr Vector<T, Dims>& operator*=(const T scalar) noexcept {
     for (int i = 0; i < Dims; i++) {
       data[i] *= scalar;
     }
@@ -180,13 +180,13 @@ struct Vector<T, 4> {
   }
 
   // Self divide by scalar
-  Vector<T, Dims>& operator/=(const T scalar) {
+  constexpr Vector<T, Dims>& operator/=(const T scalar) {
     *this *= 1./scalar;
     return *this;
   }
 
   // Self add another vector
-  Vector<T, Dims>& operator+=(const Vector<T, Dims>& other) {
+  constexpr Vector<T, Dims>& operator+=(const Vector<T, Dims>& other) noexcept {
     for (int i = 0; i < Dims; i++) {
       data[i] += other.data[i];
     }
@@ -194,7 +194,7 @@ struct Vector<T, 4> {
   }
 
   // Self subtract another vector
-  Vector<T, Dims>& operator-=(const Vector<T, Dims>& other) {
+  constexpr Vector<T, Dims>& operator-=(const Vector<T, Dims>& other) noexcept {
     *this += -other;
     return *this;
   }
@@ -215,18 +215,15 @@ struct Vector<T, 4> {
 
 // Squared magnitude of a vector
 template <typename T, size_t Dims>
-constexpr T magnitudesq(const Vector<T, Dims>& vec) {
-  T magnitude_sq{0};
-  for (int i = 0; i < Dims; i++) {
-    magnitude_sq += (vec.data[i] * vec.data[i]);
-  }
-  return magnitude_sq;
+constexpr T magnitude_sq(const Vector<T, Dims>& vec) noexcept {
+  // Squared magnitude of a vector is the dot product with itself.
+  return vec * vec;
 }
 
 // Magnitude of a vector
 template <typename T, size_t Dims>
-constexpr T magnitude(const Vector<T, Dims>& vec) {
-  return math::sqrt(magnitudesq(vec));
+constexpr T magnitude(const Vector<T, Dims>& vec) noexcept {
+  return math::sqrt(magnitude_sq(vec));
 }
 
 // Normalized vector
@@ -237,7 +234,7 @@ constexpr Vector<T, Dims> normalize(const Vector<T, Dims>& vec) {
 
 // Scalar multiplication
 template <typename T, size_t Dims>
-constexpr Vector<T, Dims> operator*(const Vector<T, Dims>& vec, const T scalar) {
+constexpr Vector<T, Dims> operator*(const Vector<T, Dims>& vec, const T scalar) noexcept {
   Vector<T, Dims> new_v;
   for (int i = 0; i < Dims; i++) {
     new_v.data[i] = vec.data[i] * scalar;
@@ -247,7 +244,7 @@ constexpr Vector<T, Dims> operator*(const Vector<T, Dims>& vec, const T scalar) 
 
 // Scalar multiplication, reversed
 template <typename T, size_t Dims>
-constexpr Vector<T, Dims> operator*(const T scalar, const Vector<T, Dims>& vec) {
+constexpr Vector<T, Dims> operator*(const T scalar, const Vector<T, Dims>& vec) noexcept {
   return vec * scalar;
 }
 
@@ -266,7 +263,7 @@ constexpr Vector<T, Dims> operator/(const T scalar, const Vector<T, Dims>& vec) 
 
 // Dot product with another vector
 template <typename T, size_t Dims>
-constexpr T operator*(const Vector<T, Dims>& vec, const Vector<T, Dims>& other) {
+constexpr T operator*(const Vector<T, Dims>& vec, const Vector<T, Dims>& other) noexcept {
   T dot_prod_result{0};
   for (int i = 0; i < Dims; i++) {
     dot_prod_result += (vec.data[i] * other.data[i]);
@@ -276,7 +273,7 @@ constexpr T operator*(const Vector<T, Dims>& vec, const Vector<T, Dims>& other) 
 
 // Element wise addition with another vector
 template <typename T, size_t Dims>
-constexpr Vector<T, Dims> operator+(const Vector<T, Dims>& vec, const Vector<T, Dims>& other) {
+constexpr Vector<T, Dims> operator+(const Vector<T, Dims>& vec, const Vector<T, Dims>& other) noexcept {
   Vector<T, Dims> new_v;
   for (int i = 0; i < Dims; i++) {
     new_v.data[i] = vec.data[i] + other.data[i];
@@ -286,13 +283,13 @@ constexpr Vector<T, Dims> operator+(const Vector<T, Dims>& vec, const Vector<T, 
 
 // Element wise subtraction with another vector.
 template <typename T, size_t Dims>
-constexpr Vector<T, Dims> operator-(const Vector<T, Dims>& vec, const Vector<T, Dims>& other) {
+constexpr Vector<T, Dims> operator-(const Vector<T, Dims>& vec, const Vector<T, Dims>& other) noexcept {
   return vec + -other;
 }
 
 // Negate elements, elementwise
 template <typename T, size_t Dims>
-constexpr Vector<T, Dims> operator-(const Vector<T, Dims>& vec) {
+constexpr Vector<T, Dims> operator-(const Vector<T, Dims>& vec) noexcept {
   Vector<T, Dims> new_v;
   for (int i = 0; i < Dims; i++) {
     new_v.data[i] = -vec.data[i];
@@ -300,10 +297,26 @@ constexpr Vector<T, Dims> operator-(const Vector<T, Dims>& vec) {
   return new_v;
 }
 
+// Vector equality
+template <typename T, size_t Dims>
+constexpr bool operator==(const Vector<T, Dims>& v1, const Vector<T, Dims>& v2) noexcept {
+  bool equal = true;
+  for (int i = 0; i < Dims; i++) {
+    equal = equal && v1[i] == v2[i];
+  }
+  return equal;
+}
+
+// Vector inequality
+template <typename T, size_t Dims>
+constexpr bool operator!=(const Vector<T, Dims>& v1, const Vector<T, Dims>& v2) noexcept {
+  return !(v1 == v2);
+}
+
 // Cross product between two generic vectors, but it takes the type of the type of the first
 // vector. This is only defined for vectors of dimension 3.
 template <typename T>
-Vector<T, 3> cross(const Vector<T, 3>& v1, const Vector<T, 3>& v2) {
+Vector<T, 3> cross(const Vector<T, 3>& v1, const Vector<T, 3>& v2) noexcept {
   return Vector<T, 3>{v1.y * v2.z - v1.z * v2.y,
                       v1.z * v2.x - v1.x * v2.z,
                       v1.x * v2.y - v1.y * v2.x};

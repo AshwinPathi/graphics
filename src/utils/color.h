@@ -27,4 +27,14 @@ constexpr Color3f to_color3f(const Color3& color3) {
   return Color3f{color3.data[0] / 255.f, color3.data[1] / 255.f, color3.data[2] / 255.f};
 }
 
+namespace colors {
+
+static constexpr Color3f Black = Color3f{0.f ,0.f, 0.f};
+static constexpr Color3f White = Color3f{1.f ,1.f, 1.f};
+static constexpr Color3f Red = Color3f{1.f ,0.f, 0.f};
+static constexpr Color3f Green = Color3f{0.f ,1.f, 0.f};
+static constexpr Color3f Blue = Color3f{0.f ,0.f, 1.f};
+
+} // namespace colors
+
 } // namespace graphics

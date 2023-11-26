@@ -1,36 +1,62 @@
 #include <iostream>
-#include <string>
-#include <type_traits>
+#include <memory>
 
-#include "math/vec.h"
+#include "objects/sphere.h"
+#include "objects/plane.h"
+#include "objects/intersectable_list.h"
+#include "objects/intersectable.h"
+#include "materials/diffuse.h"
+#include "utils/color.h"
+#include "renderer/renderer.h"
+#include "renderer/camera.h"
 #include "utils/image.h"
 
-template <size_t height, size_t width>
-constexpr graphics::Image<height, width> create_image() {
-  graphics::Image<height, width> image;
+/*
+sphere 0 0 -1 0.5
+plane 0 1 0 0.5
+plane 1 2 0.1 4
+*/
 
-  for (int i = 0; i < height; i++) {
-    for (int j = 0; j < width; j++) {
-      auto r = static_cast<float>(i) / (width-1);
-      auto g = static_cast<float>(j) / (height-1);
-      auto b = 0.f;
-      image.set_pixel(graphics::Color3f{r, g, b}, i, j);
-    }
-  }
+graphics::raytracer::Scene ConstructScene() {
+  auto diffuse_red = std::make_shared<graphics::raytracer::Diffuse>(graphics::colors::Red);
+  auto sphere = std::make_shared<graphics::raytracer::Sphere>(graphics::math::Vector3f{0.f, 0.f, -1.f},  0.5, diffuse_red);
 
-  return image;
+  auto diffuse_green = std::make_shared<graphics::raytracer::Diffuse>(graphics::colors::Green);
+  auto plane = std::make_shared<graphics::raytracer::Plane>(0.f, 1.f, 0.f, 0.5, diffuse_green);
+
+  auto diffuse_blue = std::make_shared<graphics::raytracer::Diffuse>(graphics::colors::Blue);
+  auto plane2 = std::make_shared<graphics::raytracer::Plane>(1.f, 2.f, 0.1, 4.f, diffuse_blue);
+
+
+  auto intersection_list = std::make_shared<graphics::raytracer::IntersectableList>();
+  intersection_list->AddObject(sphere);
+  intersection_list->AddObject(plane);
+  intersection_list->AddObject(plane2);
+
+
+  graphics::raytracer::Scene scene {
+    .background_color = graphics::Color3f{0.5, 0.7, 1.0},
+    .objects = intersection_list,
+  };
+  return scene;
 }
 
 int main() {
-  constexpr graphics::math::Vector3f v1{1., 3., 5.};
-  constexpr graphics::math::Vector3f v2{1., 3., 5.};
-  constexpr graphics::math::Vector3f v3 = v1 + v2;
+  constexpr size_t height = 500;
+  constexpr size_t width = 500;
+  graphics::Image<height, width> image;
 
-  constexpr size_t height = 100;
-  constexpr size_t width = 100;
-  constexpr auto image = create_image<height, width>();
+  constexpr graphics::raytracer::Camera camera { // Not actually a compile error
+    .eye      = graphics::math::ZeroVector,
+    .forward  = -graphics::math::UnitZ,
+    .right    = graphics::math::UnitX,
+    .up       = graphics::math::UnitY,
+  };
 
-  // This part is not constexpr but everything above is.
+  auto scene = ConstructScene();
+
+  graphics::raytracer::RenderScene(image, camera, scene, 1);
+
   image.write("./test.ppm");
   return 0;
 }

@@ -1,4 +1,4 @@
-/* Class to represent a ray, which has an origin point and a direction it points in. */
+// Class to represent a ray, which has an origin point and a direction it points in.
 #pragma once
 
 #include "../math/vec.h"

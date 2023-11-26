@@ -24,8 +24,14 @@ file(GLOB_RECURSE RAY_TRACER CONFIGURE_DEPENDS "src/*.cpp")
 add_executable(raytrace ${RAY_TRACER})
 
 # Compile options
-add_compile_options(-Werror)
+add_compile_options(-Wall)
 add_compile_options(-std=c++2a) # To use experimental C++20 features
+
+# For debugging
+# add_compile_options(-fsanitize=address) # address sanitizer
+add_compile_options(-g) # flags
+add_compile_options(-O0) # optimizations turned off
+add_compile_options(-fno-lto) # no lto for debug symbols in lldb
 
 # Executable
 add_executable(rayTracer ${RAY_TRACER})

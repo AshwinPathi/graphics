@@ -1,4 +1,4 @@
-/* PPM Image class. */
+// PPM Image class.
 #pragma once
 
 #include <fstream>
@@ -17,12 +17,12 @@ constexpr int kMaxPpmValue = 255;
 
 namespace graphics {
 
-// Implements a basic PPM image. Dimensions are templated for constexpr-ness.
+// Implements a basic PPM image.
 template <size_t H, size_t W>
 class Image {
 
 public:
-  // Default move, copy, and dtor should suffice.
+  Image() : buffer_{H * W} {}
 
   void write(std::string_view filepath) const {
     std::ofstream file(filepath, std::ios::binary);
@@ -41,6 +41,15 @@ public:
     }
   }
 
+  Color3& operator[](int i) const {
+    return buffer_[i];
+  }
+
+  Color3& operator[](int i) {
+    return buffer_[i];
+  }
+
+  // TODO if we use a vector as the backing data store these are no longer constexpr
   constexpr void set_pixel(const Color3& color, size_t r, size_t c) {
     buffer_[height_ * r + c] = color;
   }
@@ -66,7 +75,7 @@ private:
   size_t width_{W};
 
   // 1-d buffer. The buffer color is a triple of values, where each value is between 0 and 255.
-  std::array<Color3, H * W> buffer_{};
+  std::vector<Color3> buffer_{};
 };
 
 } // namespace graphics
