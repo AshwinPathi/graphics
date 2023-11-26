@@ -1,12 +1,12 @@
 #pragma once
-#include "../math/math.h"
+#include "../math/math_utils.h"
 
 namespace graphics {
 
 // Color for color types between 0.0 - 1.0.
 using Color3f = math::Vector<float, 3>;
 
-// Color for color types between 0 and 255.
+// Color for color types between 0 and 255. This is primarily used for PPM outputing.
 using Color3 = math::Vector<int, 3>;
 
 // Useful color helper methods.
@@ -27,13 +27,15 @@ constexpr Color3f to_color3f(const Color3& color3) {
   return Color3f{color3.data[0] / 255.f, color3.data[1] / 255.f, color3.data[2] / 255.f};
 }
 
+
+// Some helper aliases for colors.
 namespace colors {
 
-static constexpr Color3f Black = Color3f{0.f ,0.f, 0.f};
-static constexpr Color3f White = Color3f{1.f ,1.f, 1.f};
-static constexpr Color3f Red = Color3f{1.f ,0.f, 0.f};
-static constexpr Color3f Green = Color3f{0.f ,1.f, 0.f};
-static constexpr Color3f Blue = Color3f{0.f ,0.f, 1.f};
+static constexpr Color3f Black  = Color3f{0.f ,0.f, 0.f};
+static constexpr Color3f White  = Color3f{1.f ,1.f, 1.f};
+static constexpr Color3f Red    = Color3f{1.f ,0.f, 0.f};
+static constexpr Color3f Green  = Color3f{0.f ,1.f, 0.f};
+static constexpr Color3f Blue   = Color3f{0.f ,0.f, 1.f};
 
 } // namespace colors
 

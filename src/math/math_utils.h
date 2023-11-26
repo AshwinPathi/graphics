@@ -3,15 +3,7 @@
 #include <type_traits>
 #include <algorithm>
 
-#include "../math/vec.h"
-
 namespace graphics::math {
-
-// Gets the reflected vector between an incident vector and the normal of the
-// surface that the vector hit.
-constexpr Vector3f reflect(const Vector3f& incident, const Vector3f& normal) {
-  return incident - normal * 2.f * (incident * normal);
-}
 
 // Linearly interpolates the y value at x using the line created by
 // (x1, y1) and (x2, y2).

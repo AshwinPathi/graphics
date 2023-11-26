@@ -2,6 +2,7 @@
 // Ax + By + Cz + D = 0, or you can directly define the plane with a point and a normal vector.
 #pragma once
 
+#include <memory>
 #include <optional>
 
 #include "../objects/intersectable.h"

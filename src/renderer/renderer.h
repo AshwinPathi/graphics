@@ -3,13 +3,13 @@
 #include "../math/vec.h"
 #include "../utils/ray.h"
 #include "../utils/image.h"
-#include "camera.h"
-#include "scene.h"
+#include "../renderer/camera.h"
+#include "../renderer/scene.h"
 
 namespace graphics::raytracer {
 
 // TODO - remove these annoying forward declarations
-Color3f CastRay(const Ray& ray, const Scene& scene, int cur_depth);
+Color3f castRay(const Ray& ray, const Scene& scene, int cur_depth);
 Ray getCameraRay(const Camera& camera, int x, int y, int H, int W);
 
 
@@ -28,14 +28,16 @@ void RenderScene(Image<H, W>& output_image, const Camera& camera, const Scene& s
   // implementation to batch each row of parsing.
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
+      // TODO fix weird coordinate flipping here
       const auto ray = getCameraRay(camera, x, y, height, width);
-      const auto color = CastRay(ray, scene, max_depth);
+      const auto color = castRay(ray, scene, max_depth);
       output_image.set_pixel(color, y, x);
     }
   }
 }
 
-Color3f CastRay(const Ray& ray, const Scene& scene, int cur_depth) {
+
+Color3f castRay(const Ray& ray, const Scene& scene, int cur_depth) {
   if (cur_depth <= 0) {
     return colors::White;
   }
@@ -43,17 +45,17 @@ Color3f CastRay(const Ray& ray, const Scene& scene, int cur_depth) {
     if (auto scatter_result = intersect_result->material->Scatter(ray, *intersect_result)) {
       auto attenuation = scatter_result->attenuation;
       // TODO eliminate recursive call and use iteration instead
-      auto casted_ray = CastRay(scatter_result->ray_out, scene, cur_depth - 1);
-      return Color3f{
-        attenuation.r * casted_ray.r,
-        attenuation.g * casted_ray.g,
-        attenuation.b * casted_ray.b
-      };
+      auto casted_ray = castRay(scatter_result->ray_out, scene, cur_depth - 1);
+      return elem_prod(attenuation, casted_ray);
     }
     return colors::Black;
   }
-  return scene.background_color;
+
+  math::Vector3f unit = normalize(ray.direction());
+  float a = 0.5 * (unit.y + 1.0);
+  return (1.f - a) * Color3f{1.f, 1.f, 1.f} + a * scene.background_color;
 }
+
 
 Ray getCameraRay(const Camera& camera, int x, int y, int H, int W) {
   const float sx = (2 * x - W) / static_cast<float>(std::max(W, H));

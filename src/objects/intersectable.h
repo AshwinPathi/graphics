@@ -1,5 +1,5 @@
 // Abstract object that represents an intersectable entity in the scene. Intersectable objects
-// implement an intersect(ray) method that returns a metadata struct if the ray hit the object.
+// implement an Intersect(ray) method that returns a metadata struct if the ray hit the object.
 #pragma once
 
 #include <optional>

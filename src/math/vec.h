@@ -232,6 +232,16 @@ constexpr Vector<T, Dims> normalize(const Vector<T, Dims>& vec) {
   return vec * (static_cast<T>(1.0)/magnitude(vec));
 }
 
+// Element wise product between two vectors
+template <typename T, size_t Dims>
+constexpr Vector<T, Dims> elem_prod(const Vector<T, Dims>& v1, const Vector<T, Dims>& v2) {
+  Vector<T, Dims> new_v;
+  for (int i = 0; i < Dims; i++) {
+    new_v.data[i] = v1.data[i] * v2.data[i];
+  }
+  return new_v;
+}
+
 // Scalar multiplication
 template <typename T, size_t Dims>
 constexpr Vector<T, Dims> operator*(const Vector<T, Dims>& vec, const T scalar) noexcept {
@@ -261,7 +271,7 @@ constexpr Vector<T, Dims> operator/(const T scalar, const Vector<T, Dims>& vec) 
   return vec / scalar;
 }
 
-// Dot product with another vector
+// Dot product with another vector (note this overrides the * operator, use elem_prod for element wise product)
 template <typename T, size_t Dims>
 constexpr T operator*(const Vector<T, Dims>& vec, const Vector<T, Dims>& other) noexcept {
   T dot_prod_result{0};

@@ -1,6 +1,7 @@
 // Defines a basic sphere object to render in the scene.
 #pragma once
 
+#include <memory>
 #include <optional>
 
 #include "../objects/intersectable.h"

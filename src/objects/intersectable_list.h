@@ -1,4 +1,6 @@
-// Defines a list of objects that are intersectable.
+// Defines a list of objects that are intersectable. Acts as a wrapper for multiple
+// intersectable objects in the world, and only implements one intersect method that
+// returns the distance of the closest object intersected in its list.
 #pragma once
 
 #include <optional>
@@ -35,7 +37,7 @@ public:
     ObjectIntersectionInfo intersection_info;
 
     for (const auto& intersectable : intersectable_list_) {
-      if (auto* intersection_record = intersectable->Intersect(ray)) {
+      if (auto intersection_record = intersectable->Intersect(ray)) {
         hit = true;
         if (intersection_record->t <= max_distance) {
           intersection_info = *intersection_record;

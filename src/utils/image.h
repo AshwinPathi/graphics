@@ -17,7 +17,9 @@ constexpr int kMaxPpmValue = 255;
 
 namespace graphics {
 
-// Implements a basic PPM image.
+// Implements a basic PPM image. Accesses to the image class should be done through set/get pixel,
+// since these transparently convert Colors between Color3f and Color3, and they access the buffer
+// with the correct offsets.
 template <size_t H, size_t W>
 class Image {
 
@@ -41,17 +43,8 @@ public:
     }
   }
 
-  Color3& operator[](int i) const {
-    return buffer_[i];
-  }
-
-  Color3& operator[](int i) {
-    return buffer_[i];
-  }
-
-  // TODO if we use a vector as the backing data store these are no longer constexpr
   constexpr void set_pixel(const Color3& color, size_t r, size_t c) {
-    buffer_[height_ * r + c] = color;
+    buffer_[to_1d(r, c)] = color;
   }
 
   constexpr void set_pixel(const Color3f& color, size_t r, size_t c) {
@@ -59,18 +52,31 @@ public:
   }
 
   constexpr Color3 get_pixel(size_t r, size_t c) const {
-    return buffer_[height_ * r + c];
+    return buffer_[to_1d(r, c)];
   }
 
   constexpr Color3& get_pixel(size_t r, size_t c) {
-    return buffer_[height_ * r + c];
+    return buffer_[to_1d(r, c)];
   }
 
   constexpr size_t width() const { return width_; }
 
   constexpr size_t height() const { return height_; }
 
+  constexpr Color3& operator[](int i) const {
+    return buffer_[i];
+  }
+
+  constexpr Color3& operator[](int i) {
+    return buffer_[i];
+  }
+
 private:
+
+  int to_1d(int r, int c) const {
+    return width_ * r + c;
+  }
+
   size_t height_{H};
   size_t width_{W};
 
