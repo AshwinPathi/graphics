@@ -32,7 +32,9 @@ Color3f castRay(const Ray& ray, const Scene& scene, [[maybe_unused]] int cur_dep
       Ray shadow_ray{intersect_result->point + (kBias * intersect_result->normal), dir_to_light_norm};
 
       if (auto shadow_result = scene.objects->Intersect(shadow_ray); !shadow_result.has_value()) {
-        ray_color += (diffuse_color * std::max(0.f, intersect_result->normal * dir_to_light_norm));
+        float shadow_multiplier = std::max(0.f, intersect_result->normal * dir_to_light_norm);
+        Color3f lighting_multiplier = light->Color() * light->Intensity(intersect_result->point);
+        ray_color += elem_prod(diffuse_color, lighting_multiplier * shadow_multiplier);
       }
     }
     return ray_color;
@@ -71,33 +73,12 @@ void RenderScene(Image<H, W>& output_image, const Camera& camera, const Scene& s
   // implementation to batch each row of parsing.
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
-      const auto ray = getCameraRay(camera, x, y, height, width);
-      const auto color = castRay(ray, scene, max_depth);
+      const Ray ray = getCameraRay(camera, x, y, height, width);
+      // Make sure the color is within 0 - 1.
+      const Color3f color = clamp_color3f(castRay(ray, scene, max_depth));
       output_image.set_pixel(color, y, x);
     }
   }
 }
-
-/*
-Old version
-Color3f castRay(const Ray& ray, const Scene& scene, int cur_depth) {
-  if (cur_depth <= 0) {
-    return colors::White;
-  }
-  if (auto intersect_result = scene.objects->Intersect(ray)) {
-    if (auto scatter_result = intersect_result->material->Scatter(ray, *intersect_result)) {
-      auto attenuation = scatter_result->attenuation;
-      // TODO eliminate recursive call and use iteration instead
-      auto casted_ray = castRay(scatter_result->ray_out, scene, cur_depth - 1);
-      return elem_prod(attenuation, casted_ray);
-    }
-    return colors::Black;
-  }
-
-  math::Vector3f unit = normalize(ray.direction());
-  float a = 0.5 * (unit.y + 1.0);
-  return (1.f - a) * Color3f{1.f, 1.f, 1.f} + a * scene.background_color;
-}
-*/
 
 } // namespace graphics::raytracer

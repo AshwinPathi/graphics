@@ -27,6 +27,21 @@ constexpr Color3f to_color3f(const Color3& color3) {
   return Color3f{color3.data[0] / 255.f, color3.data[1] / 255.f, color3.data[2] / 255.f};
 }
 
+constexpr Color3 clamp_color3(const Color3& color3) {
+  return Color3 {
+    math::clamp(color3.data[0], 255, 255),
+    math::clamp(color3.data[1], 255, 255),
+    math::clamp(color3.data[2], 255, 255),
+  };
+}
+
+constexpr Color3f clamp_color3f(const Color3f& color3) {
+  return Color3f {
+    math::clamp(color3.data[0], 0.f, 1.f),
+    math::clamp(color3.data[1], 0.f, 1.f),
+    math::clamp(color3.data[2], 0.f, 1.f),
+  };
+}
 
 // Some helper aliases for colors.
 namespace colors {
