@@ -13,6 +13,8 @@ Vectors are as constexpr as possible to allow maximal compile time computation.
 */
 #pragma once
 
+#include <iostream>
+
 #include "../math/fast_math.h"
 
 namespace graphics::math {
@@ -344,5 +346,10 @@ static constexpr Vector3f OneVector  = Vector3f{1.,1.,1.};
 static constexpr Vector3f UnitX      = Vector3f{1.,0.,0.};
 static constexpr Vector3f UnitY      = Vector3f{0.,1.,0.};
 static constexpr Vector3f UnitZ      = Vector3f{0.,0.,1.};
+
+// Print operator
+std::ostream& operator<<(std::ostream& os, const Vector3f& vec) {
+    return os << "(x: " << vec.x << " " << ", y: " << vec.y << ", z: " << vec.z << ")";
+}
 
 }; // namespace graphics::math

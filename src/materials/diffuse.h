@@ -8,7 +8,7 @@
 #include "../math/vec.h"
 #include "../utils/ray.h"
 #include "../utils/color.h"
-#include "../objects/intersectable.h"
+#include "../objects/intersectables/intersectable.h"
 
 namespace graphics::raytracer {
 

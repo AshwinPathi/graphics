@@ -5,9 +5,9 @@
 #include <optional>
 #include <memory>
 
-#include "../utils/ray.h"
-#include "../math/vec.h"
-#include "../materials/material.h"
+#include "../../utils/ray.h"
+#include "../../math/vec.h"
+#include "../../materials/material.h"
 
 namespace graphics::raytracer {
 

@@ -4,11 +4,11 @@
 #include <memory>
 #include <optional>
 
-#include "../objects/intersectable.h"
-#include "../math/vec.h"
-#include "../utils/ray.h"
-#include "../materials/material.h"
-#include "../math/fast_math.h"
+#include "../../objects/intersectables/intersectable.h"
+#include "../../math/vec.h"
+#include "../../utils/ray.h"
+#include "../../materials/material.h"
+#include "../../math/fast_math.h"
 
 namespace graphics::raytracer {
 

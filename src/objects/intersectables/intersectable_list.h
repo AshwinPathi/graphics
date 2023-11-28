@@ -6,8 +6,8 @@
 #include <optional>
 #include <vector>
 
-#include "../objects/intersectable.h"
-#include "../utils/ray.h"
+#include "../../objects/intersectables/intersectable.h"
+#include "../../utils/ray.h"
 
 namespace graphics::raytracer {
 

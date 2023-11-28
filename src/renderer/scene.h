@@ -1,7 +1,9 @@
 #pragma once
 #include <memory>
+#include <vector>
 
-#include "../objects/intersectable_list.h"
+#include "../objects/intersectables/intersectable_list.h"
+#include "../objects/lights/light.h"
 #include "../utils/color.h"
 
 namespace graphics::raytracer {
@@ -10,8 +12,8 @@ namespace graphics::raytracer {
 // any lighting elements, the sky background, etc.
 struct Scene {
   std::shared_ptr<IntersectableList> objects;
-  Color3f background_color;
-  // TOOD Lighting objects go here
+  std::vector<std::shared_ptr<Light>> lights;
+  Color3f background_color{};
 };
 
 } // namespace graphics::raytracer
