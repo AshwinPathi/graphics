@@ -6,6 +6,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <regex>
 
 #include "../objects/all_objects.h"
 #include "../renderer/scene.h"
@@ -28,8 +29,11 @@ namespace {
 std::vector<std::string> SplitString(const std::string& s) {
   std::vector<std::string> split;
   std::istringstream iss(s);
-  for(std::string line; std::getline(iss, line, ' '); ){
-    split.push_back(line);
+  for(std::string line; std::getline(iss, line, ' '); ) {
+    std::string stripped_line = std::regex_replace(line, std::regex("^ +| +$|( ) +"), "$1");
+    if (!stripped_line.empty() && stripped_line[0] != ' ') {
+      split.push_back(stripped_line);
+    }
   }
   return split;
 }

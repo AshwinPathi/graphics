@@ -13,8 +13,8 @@ graphics::raytracer::Scene ConstructScene(std::string_view path) {
 }
 
 int main(int argc, char** argv) {
-  constexpr size_t height = 500;
-  constexpr size_t width = 500;
+  constexpr size_t height = 200;
+  constexpr size_t width = 200;
   graphics::Image<height, width> image;
 
   constexpr graphics::raytracer::Camera camera { // Not actually a compile error
