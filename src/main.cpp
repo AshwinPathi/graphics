@@ -13,8 +13,8 @@ graphics::raytracer::Scene ConstructScene(std::string_view path) {
 }
 
 int main(int argc, char** argv) {
-  constexpr size_t height = 200;
-  constexpr size_t width = 200;
+  constexpr size_t height = 400;
+  constexpr size_t width = 400;
   graphics::Image<height, width> image;
 
   constexpr graphics::raytracer::Camera camera { // Not actually a compile error
@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
   auto scene = ConstructScene(argv[1]);
 
   // If this becomes > 1, then we have execessive shadow because of our diffuse model.
-  graphics::raytracer::RenderScene(image, camera, scene, 1);
+  graphics::raytracer::RenderSceneMultithreaded(image, camera, scene, 1);
 
   image.write("./test.ppm");
   return 0;

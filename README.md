@@ -1,5 +1,9 @@
 # Raytracer
 ```
 ./build.sh
-./build/raytracer
+./build/rayTracer {path to scene file}
+```
+or
+```
+./run.sh {path to scene file}
 ```

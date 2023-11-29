@@ -1,5 +1,7 @@
 #pragma once
 
+#include <thread>
+
 #include "../math/vec.h"
 #include "../utils/ray.h"
 #include "../utils/image.h"
@@ -25,8 +27,7 @@ Color3f castRay(const Ray& ray, const Scene& scene, [[maybe_unused]] int cur_dep
     // attenuation is the color of the diffuse component of the hit object.
     auto diffuse_color = scatter_result->attenuation;
 
-    bool in_shadow = false;
-    for (const auto light : scene.lights) {
+    for (const auto& light : scene.lights) {
  
       math::Vector3f dir_to_light_norm = normalize(light->Direction(intersect_result->point));
       Ray shadow_ray{intersect_result->point + (kBias * intersect_result->normal), dir_to_light_norm};
@@ -61,7 +62,8 @@ Ray getCameraRay(const Camera& camera, int x, int y, int H, int W) {
 // Template here to pass in templated image
 // TODO maybe remove
 template <size_t H, size_t W>
-void RenderScene(Image<H, W>& output_image, const Camera& camera, const Scene& scene, int max_depth) {
+void RenderSceneHelper(Image<H, W>& output_image, const Camera& camera, const Scene& scene,
+                       int min_height, int max_height, int max_depth) {
   // Have to cast to an integer since this will mess up negative division.
   const int height = static_cast<int>(output_image.height());
   const int width = static_cast<int>(output_image.width());
@@ -69,9 +71,7 @@ void RenderScene(Image<H, W>& output_image, const Camera& camera, const Scene& s
   // Basic loop for rendering - go through every pixel in the scene, cast
   // a ray from it, and see what color it is. Assign that color to the
   // pixel we just shot a ray from.
-  // TODO - this can be trivially parallelized, consider using some threadpool
-  // implementation to batch each row of parsing.
-  for (int y = 0; y < height; y++) {
+  for (int y = min_height; y < max_height; y++) {
     for (int x = 0; x < width; x++) {
       const Ray ray = getCameraRay(camera, x, y, height, width);
       // Make sure the color is within 0 - 1.
@@ -79,6 +79,34 @@ void RenderScene(Image<H, W>& output_image, const Camera& camera, const Scene& s
       output_image.set_pixel(color, y, x);
     }
   }
+}
+
+template <size_t H, size_t W>
+void RenderSceneMultithreaded(Image<H, W>& output_image, const Camera& camera, const Scene& scene, int max_depth) {
+  constexpr int num_threads = 8;
+
+  const int height = static_cast<int>(output_image.height());
+  const int chunk_size = H / num_threads;
+
+  std::vector<std::thread> threads(num_threads);
+  // Begin executing our fast render subprocess on each thread
+  for (int i = 0; i < num_threads; i++) {
+    int start_index = i * chunk_size;
+    int end_index = (i == num_threads - 1 ? height : (i + 1) * chunk_size);
+    // Note that output image is passed in by reference since we need each thread
+    // to modify the image buffer directly.
+    threads[i] = std::thread(RenderSceneHelper<H, W>, std::ref(output_image), camera, scene, start_index, end_index, max_depth);
+  }
+  // Stop the threads by joining them all
+  for (int i = 0; i < num_threads; i++) {
+    threads[i].join();
+  }
+}
+
+template <size_t H, size_t W>
+void RenderScene(Image<H, W>& output_image, const Camera& camera, const Scene& scene, int max_depth) {
+  const int height = static_cast<int>(output_image.height());
+  RenderSceneHelper(output_image, camera, scene, 0, height, max_depth);
 }
 
 } // namespace graphics::raytracer

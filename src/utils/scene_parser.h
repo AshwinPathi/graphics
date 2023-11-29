@@ -21,6 +21,7 @@ constexpr std::string_view kPlaneCommand = "plane";
 constexpr std::string_view kVertexCommand = "xyz";
 constexpr std::string_view kTriangleCommand = "trif";
 constexpr std::string_view kSunCommand = "sun";
+constexpr std::string_view kBulbCommand = "bulb";
 
 }
 
@@ -83,6 +84,8 @@ private:
       addTriangle(scene, split_line);
     } else if (split_line[0] == kSunCommand) {
       addSun(scene, split_line);
+    } else if (split_line[0] == kBulbCommand) {
+      addBulb(scene, split_line);
     } else {
       std::cerr << "Unsupported command: '" << split_line[0] << "' \n";
     }
@@ -143,7 +146,22 @@ private:
     scene.lights.push_back(sun);
   }
 
+  void addBulb(Scene& scene, const std::vector<std::string>& split_line) const {
+    auto bulb = std::make_shared<Bulb>(
+      math::Point3f{
+        std::stof(split_line[1]),
+        std::stof(split_line[2]),
+        std::stof(split_line[3])
+      },
+      current_color_
+    );
+    scene.lights.push_back(bulb);
+  }
+
   inline math::Point3f getVertex(int i) const {
+    if (i < 0) {
+      return vertices_[vertices_.size() + i];
+    }
     return vertices_[i - 1];
   }
 

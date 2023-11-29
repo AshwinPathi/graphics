@@ -37,7 +37,6 @@ public:
 
   std::optional<ObjectIntersectionInfo> Intersect(const Ray& ray) const override {
     const float denominator = ray.direction() * normal_;
-    const float num = (point_ - ray.origin()) * normal_;
     // Ray parallel to the plane, so no intersection.
     if (denominator > -1e-6 && denominator < 1e-6) {
       return std::nullopt;

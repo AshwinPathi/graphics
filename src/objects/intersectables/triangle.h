@@ -24,7 +24,7 @@ public:
     math::Vector3f v0v2 = v2_ - v0_;
 
     math::Vector3f N = cross(v0v1, v0v2);
-    float area = magnitude(N);
+    // float area = magnitude(N);
 
     // check if the ray and plane are parallel.
     float NdotRayDirection = N * ray.direction();

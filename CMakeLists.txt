@@ -25,6 +25,8 @@ add_executable(raytrace ${RAY_TRACER})
 
 # Compile options
 add_compile_options(-Wall)
+add_compile_options(-Wno-missing-braces)
+add_compile_options(-Wmissing-field-initializers )
 add_compile_options(-std=c++2a) # To use experimental C++20 features
 
 # For debugging
