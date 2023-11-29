@@ -6,3 +6,7 @@
 - https://github.com/HNegus/RTIOW/tree/master/src
 - https://codeplea.com/triangular-interpolation
 - https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates.html#:~:text=The%20location%20of%20this%20point,%2B%20v%20B%20%2B%20w%20C%20.
+
+
+- https://people.computing.clemson.edu/~dhouse/courses/405/docs/brief-mtl-file-format.html#:~:text=Material%20Library%20File%20(.mtl),mtl%20extension.
+- https://en.wikipedia.org/wiki/Wavefront_.obj_file

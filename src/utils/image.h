@@ -20,11 +20,10 @@ namespace graphics {
 // Implements a basic PPM image. Accesses to the image class should be done through set/get pixel,
 // since these transparently convert Colors between Color3f and Color3, and they access the buffer
 // with the correct offsets.
-template <size_t H, size_t W>
 class Image {
 
 public:
-  Image() : buffer_{H * W} {}
+  Image(size_t height, size_t width) : height_{height}, width_{width}, buffer_{height_ * width_} {}
 
   void write(std::string_view filepath) const {
     std::ofstream file(filepath, std::ios::binary);
@@ -63,7 +62,7 @@ public:
 
   constexpr size_t height() const { return height_; }
 
-  constexpr Color3& operator[](int i) const {
+  constexpr const Color3& operator[](int i) const {
     return buffer_[i];
   }
 
@@ -77,8 +76,8 @@ private:
     return width_ * r + c;
   }
 
-  size_t height_{H};
-  size_t width_{W};
+  size_t height_{};
+  size_t width_{};
 
   // 1-d buffer. The buffer color is a triple of values, where each value is between 0 and 255.
   std::vector<Color3> buffer_{};

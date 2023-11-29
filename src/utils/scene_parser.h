@@ -23,6 +23,10 @@ constexpr std::string_view kTriangleCommand = "trif";
 constexpr std::string_view kSunCommand = "sun";
 constexpr std::string_view kBulbCommand = "bulb";
 
+// for obj files
+constexpr std::string_view kObjVertexCommand = "v";
+constexpr std::string_view kObjTriangleCommand = "f";
+
 }
 
 namespace {
@@ -65,6 +69,7 @@ public:
       parseCommand(scene, SplitString(line));
     }
     file.close();
+    std::cout << "Scene parsing complete.\n";
     return scene;
   }
 
@@ -74,13 +79,13 @@ private:
       return;
     } else if (split_line[0] == kColorCommand) {
       updateColor(split_line);
-    } else if (split_line[0] == kVertexCommand) {
+    } else if (split_line[0] == kVertexCommand || split_line[0] == kObjVertexCommand) {
       addVertex(split_line);
     } else if (split_line[0] == kSphereCommand) {
       addSphere(scene, split_line);
     } else if (split_line[0] == kPlaneCommand) {
       addPlane(scene, split_line);
-    } else if (split_line[0] == kTriangleCommand) {
+    } else if (split_line[0] == kTriangleCommand || split_line[0] == kObjTriangleCommand) {
       addTriangle(scene, split_line);
     } else if (split_line[0] == kSunCommand) {
       addSun(scene, split_line);

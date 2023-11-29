@@ -60,9 +60,7 @@ Ray getCameraRay(const Camera& camera, int x, int y, int H, int W) {
 
 
 // Template here to pass in templated image
-// TODO maybe remove
-template <size_t H, size_t W>
-void RenderSceneHelper(Image<H, W>& output_image, const Camera& camera, const Scene& scene,
+void RenderSceneHelper(Image& output_image, const Camera& camera, const Scene& scene,
                        int min_height, int max_height, int max_depth) {
   // Have to cast to an integer since this will mess up negative division.
   const int height = static_cast<int>(output_image.height());
@@ -81,12 +79,11 @@ void RenderSceneHelper(Image<H, W>& output_image, const Camera& camera, const Sc
   }
 }
 
-template <size_t H, size_t W>
-void RenderSceneMultithreaded(Image<H, W>& output_image, const Camera& camera, const Scene& scene, int max_depth) {
+void RenderSceneMultithreaded(Image& output_image, const Camera& camera, const Scene& scene, int max_depth) {
   constexpr int num_threads = 8;
 
   const int height = static_cast<int>(output_image.height());
-  const int chunk_size = H / num_threads;
+  const int chunk_size = height / num_threads;
 
   std::vector<std::thread> threads(num_threads);
   // Begin executing our fast render subprocess on each thread
@@ -95,7 +92,7 @@ void RenderSceneMultithreaded(Image<H, W>& output_image, const Camera& camera, c
     int end_index = (i == num_threads - 1 ? height : (i + 1) * chunk_size);
     // Note that output image is passed in by reference since we need each thread
     // to modify the image buffer directly.
-    threads[i] = std::thread(RenderSceneHelper<H, W>, std::ref(output_image), camera, scene, start_index, end_index, max_depth);
+    threads[i] = std::thread(RenderSceneHelper, std::ref(output_image), camera, scene, start_index, end_index, max_depth);
   }
   // Stop the threads by joining them all
   for (int i = 0; i < num_threads; i++) {
@@ -103,8 +100,7 @@ void RenderSceneMultithreaded(Image<H, W>& output_image, const Camera& camera, c
   }
 }
 
-template <size_t H, size_t W>
-void RenderScene(Image<H, W>& output_image, const Camera& camera, const Scene& scene, int max_depth) {
+void RenderScene(Image& output_image, const Camera& camera, const Scene& scene, int max_depth) {
   const int height = static_cast<int>(output_image.height());
   RenderSceneHelper(output_image, camera, scene, 0, height, max_depth);
 }

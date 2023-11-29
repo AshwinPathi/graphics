@@ -15,10 +15,10 @@ graphics::raytracer::Scene ConstructScene(std::string_view path) {
 int main(int argc, char** argv) {
   constexpr size_t height = 400;
   constexpr size_t width = 400;
-  graphics::Image<height, width> image;
+  graphics::Image image(height, width);
 
   constexpr graphics::raytracer::Camera camera { // Not actually a compile error
-    .eye      = graphics::math::ZeroVector,
+    .eye      = graphics::math::Vector3f{0, 0, 6}, //graphics::math::ZeroVector,
     .forward  = -graphics::math::UnitZ,
     .right    = graphics::math::UnitX,
     .up       = graphics::math::UnitY,
