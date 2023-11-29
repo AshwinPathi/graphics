@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
   graphics::Image image(height, width);
 
   constexpr graphics::raytracer::Camera camera { // Not actually a compile error
-    .eye      = graphics::math::Vector3f{0, 0, 6}, //graphics::math::ZeroVector,
+    .eye      = graphics::math::Vector3f{0, 0, 1}, //graphics::math::ZeroVector,
     .forward  = -graphics::math::UnitZ,
     .right    = graphics::math::UnitX,
     .up       = graphics::math::UnitY,

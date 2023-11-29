@@ -10,3 +10,4 @@
 
 - https://people.computing.clemson.edu/~dhouse/courses/405/docs/brief-mtl-file-format.html#:~:text=Material%20Library%20File%20(.mtl),mtl%20extension.
 - https://en.wikipedia.org/wiki/Wavefront_.obj_file
+- https://github.com/fabianishere/traceur/blob/master/assets/CornellBox-Original.mtl

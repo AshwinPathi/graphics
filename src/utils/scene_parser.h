@@ -7,10 +7,12 @@
 #include <fstream>
 #include <sstream>
 #include <regex>
+#include <optional>
 
 #include "../objects/all_objects.h"
 #include "../renderer/scene.h"
 #include "../materials/all_materials.h"
+#include "../utils/vertex.h"
 
 namespace {
 
@@ -22,6 +24,7 @@ constexpr std::string_view kVertexCommand = "xyz";
 constexpr std::string_view kTriangleCommand = "trif";
 constexpr std::string_view kSunCommand = "sun";
 constexpr std::string_view kBulbCommand = "bulb";
+constexpr std::string_view kNormalCommand = "normal";
 
 // for obj files
 constexpr std::string_view kObjVertexCommand = "v";
@@ -37,9 +40,11 @@ std::vector<std::string> SplitString(const std::string& s) {
   for(std::string line; std::getline(iss, line, ' '); ) {
     std::string stripped_line = std::regex_replace(line, std::regex("^ +| +$|( ) +"), "$1");
     if (!stripped_line.empty() && stripped_line[0] != ' ') {
+      //std::cout << stripped_line << ", ";
       split.push_back(stripped_line);
     }
   }
+  //std::cout << std::endl;
   return split;
 }
 
@@ -48,6 +53,7 @@ std::vector<std::string> SplitString(const std::string& s) {
 namespace graphics::raytracer {
 
 class SceneParser {
+
 public:
   SceneParser() = default;
 
@@ -62,6 +68,7 @@ public:
     if (!file.is_open()) {
       std::cerr << "Unable to open file.\n";
     }
+    std::cout << "Beginning scene parsing.\n";
     while (std::getline(file, line)) {
       if (line == "\n" || line.empty() || line[0] == '#') {
         continue;
@@ -79,6 +86,8 @@ private:
       return;
     } else if (split_line[0] == kColorCommand) {
       updateColor(split_line);
+    }  else if (split_line[0] == kNormalCommand) {
+      setNormal(split_line);
     } else if (split_line[0] == kVertexCommand || split_line[0] == kObjVertexCommand) {
       addVertex(split_line);
     } else if (split_line[0] == kSphereCommand) {
@@ -104,8 +113,21 @@ private:
     };
   }
 
+  void setNormal(const std::vector<std::string>& split_line) {
+    current_normal_ = math::Vector3f {
+      std::stof(split_line[1]),
+      std::stof(split_line[2]),
+      std::stof(split_line[3]),
+    };
+  }
+
   void addVertex(const std::vector<std::string>& split_line) {
-    vertices_.push_back(math::Point3f{std::stof(split_line[1]), std::stof(split_line[2]), std::stof(split_line[3])});
+    math::Point3f point {
+      std::stof(split_line[1]),
+      std::stof(split_line[2]),
+      std::stof(split_line[3]),
+    };
+    vertices_.push_back(Vertexff{point, current_normal_});
   }
 
   void addSphere(Scene& scene, const std::vector<std::string>& split_line) const {
@@ -163,15 +185,17 @@ private:
     scene.lights.push_back(bulb);
   }
 
-  inline math::Point3f getVertex(int i) const {
+  inline Vertexff getVertex(int i) const {
     if (i < 0) {
       return vertices_[vertices_.size() + i];
     }
     return vertices_[i - 1];
   }
 
-  std::vector<math::Point3f> vertices_{};
+  std::vector<Vertexff> vertices_{};
+
   Color3f current_color_{colors::White};
+  std::optional<math::Vector3f> current_normal_{};
 };
 
 } // namespace graphics::raytracer

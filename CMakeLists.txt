@@ -29,11 +29,20 @@ add_compile_options(-Wno-missing-braces)
 add_compile_options(-Wmissing-field-initializers )
 add_compile_options(-std=c++2a) # To use experimental C++20 features
 
+
+option(DEBUG "Turn on debugging" OFF) #OFF by default
 # For debugging
-# add_compile_options(-fsanitize=address) # address sanitizer
-add_compile_options(-g) # flags
-add_compile_options(-O0) # optimizations turned off
-add_compile_options(-fno-lto) # no lto for debug symbols in lldb
+if(DEBUG)
+    message("Debugging turned ON.")
+    # add_compile_options(-fsanitize=address) # address sanitizer
+    add_compile_options(-g) # flags
+    add_compile_options(-O0) # optimizations turned off
+    add_compile_options(-fno-lto) # no lto for debug symbols in lldb
+else()
+    message("Debugging turned OFF.")
+    add_compile_options(-O3)
+endif(DEBUG)
+unset(DEBUG CACHE)
 
 # Executable
 add_executable(rayTracer ${RAY_TRACER})
